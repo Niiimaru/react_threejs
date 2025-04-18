@@ -25,6 +25,8 @@ const AnimationController: React.FC<AnimationControllerProps> = ({ cameraRef, bo
         return a + (b - a) * t;
     }
 
+    console.log(scrollPercent);
+
     // スクロール割合を 0～1 の値にスケーリングする関数
     function scalePercent(scroll: number, start: number, end: number): number {
         return (scroll - start) / (end - start);
