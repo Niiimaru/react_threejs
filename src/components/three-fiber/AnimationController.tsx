@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Mesh, PerspectiveCamera } from 'three';
-import { useFrame } from '@react-three/fiber';
+import React, { useState, useEffect } from "react";
+import { Mesh, PerspectiveCamera } from "three";
+import { useFrame } from "@react-three/fiber";
 
 /**
  * useFrame とは？
@@ -24,8 +24,8 @@ const AnimationController: React.FC<AnimationControllerProps> = ({ cameraRef, bo
     return a + (b - a) * t;
   }
 
-  console.log('scrollPercent');
-  const test = 'hello world';
+  console.log("scrollPercent");
+  const test = "hello world";
   console.log(test);
 
   // スクロール割合を 0～1 の値にスケーリングする関数
@@ -40,8 +40,8 @@ const AnimationController: React.FC<AnimationControllerProps> = ({ cameraRef, bo
       setScrollPercent((scroll / totalHeight) * 100);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useFrame(() => {
