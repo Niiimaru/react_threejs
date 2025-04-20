@@ -29,6 +29,9 @@ const AnimationController: React.FC<AnimationControllerProps> = ({ cameraRef, bo
     return (scroll - start) / (end - start);
   }
 
+  const test = "hello world";
+  console.log(test);
+
   useEffect(() => {
     const handleScroll = () => {
       const scroll = document.documentElement.scrollTop;
