@@ -1,7 +1,6 @@
-import React, {useState, useEffect} from "react";
-import {Mesh, PerspectiveCamera} from "three";
-import {useFrame} from "@react-three/fiber";
-
+import React, { useState, useEffect } from 'react';
+import { Mesh, PerspectiveCamera } from 'three';
+import { useFrame } from '@react-three/fiber';
 
 /**
  * useFrame とは？
@@ -12,66 +11,68 @@ import {useFrame} from "@react-three/fiber";
  */
 
 interface AnimationControllerProps {
-    cameraRef: React.RefObject<PerspectiveCamera | null>;
-    boxRef: React.RefObject<Mesh | null>;
-    torusRef: React.RefObject<Mesh | null>;
+  cameraRef: React.RefObject<PerspectiveCamera | null>;
+  boxRef: React.RefObject<Mesh | null>;
+  torusRef: React.RefObject<Mesh | null>;
 }
 
 const AnimationController: React.FC<AnimationControllerProps> = ({ cameraRef, boxRef, torusRef }) => {
-    const [scrollPercent, setScrollPercent] = useState(0);
+  const [scrollPercent, setScrollPercent] = useState(0);
 
-    // 線形補間関数
-    function lerp(a: number, b: number, t: number): number {
-        return a + (b - a) * t;
+  // 線形補間関数
+  function lerp(a: number, b: number, t: number): number {
+    return a + (b - a) * t;
+  }
+
+  console.log('scrollPercent');
+  const test = 'hello world';
+  console.log(test);
+
+  // スクロール割合を 0～1 の値にスケーリングする関数
+  function scalePercent(scroll: number, start: number, end: number): number {
+    return (scroll - start) / (end - start);
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scroll = document.documentElement.scrollTop;
+      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      setScrollPercent((scroll / totalHeight) * 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useFrame(() => {
+    if (cameraRef.current && boxRef.current && torusRef.current) {
+      const start = 0;
+      const end = 40;
+
+      const second_start = 40;
+      const second_end = 100;
+
+      if (scrollPercent > 0 && scrollPercent < 40) {
+        // カメラが box を向くように
+        cameraRef.current.lookAt(boxRef.current.position);
+        // カメラの位置をスクロールに合わせて変える
+        cameraRef.current.position.set(0, 1, 10);
+        // box の位置を少しずつ前に動かす
+        boxRef.current.position.z = lerp(-10, 2, scalePercent(scrollPercent, start, end));
+        torusRef.current.position.z = lerp(10, -30, scalePercent(scrollPercent, start, end));
+      }
+
+      if (scrollPercent > 40) {
+        cameraRef.current.lookAt(boxRef.current.position);
+        cameraRef.current.position.x = lerp(0, 15, scalePercent(scrollPercent, second_start, second_end));
+        cameraRef.current.position.y = lerp(1, 15, scalePercent(scrollPercent, second_start, second_end));
+        cameraRef.current.position.z = lerp(10, 25, scalePercent(scrollPercent, second_start, second_end));
+      }
     }
+  });
 
-    console.log("scrollPercent");
-
-    // スクロール割合を 0～1 の値にスケーリングする関数
-    function scalePercent(scroll: number, start: number, end: number): number {
-        return (scroll - start) / (end - start);
-    }
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const scroll = document.documentElement.scrollTop;
-            const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            setScrollPercent((scroll / totalHeight) * 100);
-        }
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useFrame(() => {
-        if (cameraRef.current && boxRef.current && torusRef.current) {
-            const start = 0;
-            const end = 40;
-
-            const second_start = 40;
-            const second_end = 100;
-
-            if (scrollPercent > 0 && scrollPercent < 40) {
-                // カメラが box を向くように
-                cameraRef.current.lookAt(boxRef.current.position);
-                // カメラの位置をスクロールに合わせて変える
-                cameraRef.current.position.set(0, 1, 10);
-                // box の位置を少しずつ前に動かす
-                boxRef.current.position.z = lerp(-10, 2, scalePercent(scrollPercent, start, end));
-                torusRef.current.position.z = lerp(10, -30, scalePercent(scrollPercent, start, end));
-            }
-
-            if (scrollPercent > 40) {
-                cameraRef.current.lookAt(boxRef.current.position);
-                cameraRef.current.position.x = lerp(0, 15, scalePercent(scrollPercent, second_start, second_end));
-                cameraRef.current.position.y = lerp(1, 15, scalePercent(scrollPercent, second_start, second_end));
-                cameraRef.current.position.z = lerp(10, 25, scalePercent(scrollPercent, second_start, second_end));
-            }
-        }
-    })
-
-    // 何もレンダリングしない場合は、必ず ReactNode (ここでは null) を返す
-    return null;
-}
+  // 何もレンダリングしない場合は、必ず ReactNode (ここでは null) を返す
+  return null;
+};
 
 export default AnimationController;
